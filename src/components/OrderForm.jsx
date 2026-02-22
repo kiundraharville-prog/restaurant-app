@@ -1,81 +1,85 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const OrderForm = () => {
+  const navigate = useNavigate();
 
-    let name = "";
-    let order_text = "";
+  const [name, setName] = useState("");
+  const [orderText, setOrderText] = useState("");
+  const [result, setResult] = useState("");
 
-    const navigate = useNavigate();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const [result, setResult] = useState("");
+    const url =
+  import.meta.env.VITE_SUPABASE_URL + "/rest/v1/orders";
 
-    const onChangeName = (e) => {
-        const { value } = e.target;
-        name = value;
+    const token = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    const order = {
+      customer_name: name,
+      order_details: orderText,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: token,
+          Authorization: `Bearer ${token}`,
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify(order),
+      });
+
+      if (response.ok) {
+        setResult("Order Created");
+        setName("");
+        setOrderText("");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      } else {
+        setResult("Error creating order");
+      }
+    } catch (error) {
+      console.error(error);
+      setResult("Something went wrong.");
     }
+  };
 
-    const onChangeOrder = (e) => {
-        const { value } = e.target;
-        order_text = value;
-    }
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Name</label>
+          <input
+            type="text"
+            className="form-control"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
 
-    const handleSubmit = async () => {
+        <div className="mb-3">
+          <label className="form-label">Order</label>
+          <textarea
+            className="form-control"
+            value={orderText}
+            onChange={(e) => setOrderText(e.target.value)}
+            required
+          />
+        </div>
 
-        event.preventDefault();
+        <button type="submit" className="btn btn-success">
+          Send Order
+        </button>
+      </form>
 
-        const url = import.meta.env.VITE_SUPABASE_URL + "invoice";
-        const token = import.meta.env.VITE_SUPABASE_ANON_KEY;
-        const order = {
-            name,
-            order_text
-        }
-
-        console.log(order)
-
-
-        const response = await fetch(url,
-            {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': token
-                },
-                body: JSON.stringify(order)
-            }
-        )
-
-        if (response.ok) {
-            setResult("Order Created")
-
-            setTimeout(() => {
-                navigate("/")
-            }, 2000)
-
-        } else {
-            setResult("Error in Order")
-        }
-
-
-    }
-
-    return (
-        <>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label className="form-label">Name</label>
-                    <input type="text" className="form-control" onChange={onChangeName} />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Order</label>
-                    <textarea type="text" className="form-control" onChange={onChangeOrder} />
-                </div>
-
-                <button className='btn btn-success'>Send Order</button>
-            </form>
-
-            <p className='mt-3'>{result}</p>
-        </>
-    )
-}
+      <p className="mt-3">{result}</p>
+    </>
+  );
+};
