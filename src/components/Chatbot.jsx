@@ -6,7 +6,7 @@ const [messages, setMessages] = useState([]);
 const [input, setInput] = useState("");
 const [menuText, setMenuText] = useState("");
 
-// 1️⃣ Get menu from Supabase
+
 useEffect(() => {
 async function getMenu() {
 const { data } = await supabase
@@ -14,7 +14,7 @@ const { data } = await supabase
 .select("*");
 
 if (data) {
-// Convert menu into readable text
+
 const formattedMenu = data
 .map(
 (item) =>
