@@ -1,15 +1,14 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function NavBar() {
-  return (
-    <nav>
-      <Link to="/">Home</Link>
-      {" | "}
-      <Link to="/menu">Menu</Link>
-      {" | "}
-      <Link to="/order">Order Now</Link>
-    </nav>
-  );
+return (
+<nav>
+<NavLink to="/">Home</NavLink> |{" "}
+<NavLink to="/menu">Menu</NavLink> |{" "}
+<NavLink to="/order">Order</NavLink> |{" "}
+<NavLink to="/chatbot">Chatbot</NavLink>
+</nav>
+);
 }
 
 export default NavBar;
